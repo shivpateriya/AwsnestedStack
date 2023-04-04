@@ -49,6 +49,82 @@ Parameters:
       - Prod
     ConstraintDescription: 'Specify either Dev, Test or Prod.'  
 
+  DatabaseInstanceIdentifier:
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: Must begin with a letter and contain only alphanumeric characters
+    Default: mysql57db
+    Description: Instance identifier name
+    MaxLength: 60
+    MinLength: 1
+    Type: String
+
+  DatabaseName:
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: Must begin with a letter and contain only alphanumeric characters
+    Default: applicationdb
+    Description: MySQL database name
+    MaxLength: 64
+    MinLength: 1
+    Type: String
+
+  DatabaseUser:
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: Must begin with a letter and contain only alphanumeric characters
+    Default: dbadmin
+    Description: Username for MySQL database access
+    MaxLength: 16
+    MinLength: 1
+    NoEcho: true
+    Type: String
+
+  DatabasePassword:
+    AllowedPattern: '[a-zA-Z0-9]*'
+    ConstraintDescription: Must contain only alphanumeric characters
+    Default: database1407
+    Description: Password for MySQL database access
+    MaxLength: 41
+    MinLength: 8
+    NoEcho: true
+    Type: String
+
+  DatabaseBackupRetentionPeriod:
+    ConstraintDescription: Database backup retention period must be between 0 and 35 days
+    Default: 0
+    Description: The number of days for which automatic DB snapshots are retained
+    MaxValue: 35
+    MinValue: 0
+    Type: Number
+
+  DatabaseAllocatedStorage:
+    ConstraintDescription: Must be between 5 and 1024Gb
+    Default: 20
+    Description: The size of the database (Gb)
+    MaxValue: 65536
+    MinValue: 5
+    Type: Number
+
+  DatabaseInstanceClass:
+    AllowedValues:
+      - db.t1.micro
+      - db.t2.micro
+      - db.m1.small
+      - db.m1.medium
+      - db.m1.large
+    ConstraintDescription: Must select a valid database instance type
+    Default: db.t2.micro
+    Description: The database instance type
+    Type: String
+
+  MultiAZDatabase:
+    AllowedValues:
+      - true
+      - false
+    ConstraintDescription: Must be either true or false
+    Default: false
+    Description: Creates a Multi-AZ MySQL Amazon RDS database instance
+    Type: String
+
+
 # 1. Add code from "1. Create VPC parameters in the main template" section
 
 # 4. Add code from "1. Create EC2 parameters in the main template" section
@@ -76,5 +152,13 @@ Resources:
       TimeoutInMinutes: 20
       Parameters:
         EnvironmentType: !Ref EnvironmentType
+        VpcId: !GetAtt VpcStack.Outputs.VpcId
+        SubnetId: !GetAtt VpcStack.Outputs.PublicSubnet1
+  Rds:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketName}.s3.amazonaws.com/Rds.yaml
+      TimeoutInMinutes: 20
+      Parameters:
         VpcId: !GetAtt VpcStack.Outputs.VpcId
         SubnetId: !GetAtt VpcStack.Outputs.PublicSubnet1
