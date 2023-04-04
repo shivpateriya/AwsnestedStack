@@ -51,37 +51,6 @@ Mappings:
       InstanceType: t2.small
 
 Resources:
-  WebServerInstance:
-    Type: AWS::EC2::Instance
-    Properties:
-      SubnetId: !Ref SubnetId
-      # IamInstanceProfile: !Ref WebServerInstanceProfile
-      ImageId: !Ref AmiID
-      KeyName: nginx
-      InstanceType: !FindInMap [EnvironmentToInstanceType, !Ref EnvironmentType, InstanceType]
-      SecurityGroupIds:
-        - !Ref SSHSecurityGroup
-      Tags:
-        - Key: Name
-          Value: !Join [ ' ', [ !Ref EnvironmentType, Web Server ] ]
-
-
-  WebServerInstance2:
-      Type: AWS::EC2::Instance
-      Properties:
-        SubnetId: !Ref SubnetId
-        # IamInstanceProfile: !Ref WebServerInstanceProfile
-        ImageId: !Ref AmiID
-        KeyName: nginx
-        InstanceType: !FindInMap [EnvironmentToInstanceType, !Ref EnvironmentType, InstanceType]
-        SecurityGroupIds: !Ref WebServerSecurityGroup
-        Tags:
-          - Key: Name
-            Value: !Join [ ' ', [ !Ref EnvironmentType, Web Server ] ]
-
-
-
-
   SSHSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -107,7 +76,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          SourceSecurityGroupId: !Ref SSHSecurityGrou
+          SourceSecurityGroupId: !Ref SSHSecurityGroup
       SecurityGroupEgress:
         - IpProtocol: tcp
           FromPort: 80
@@ -118,6 +87,40 @@ Resources:
           ToPort: 443
           CidrIp: 0.0.0.0/0
       VpcId: !Ref VpcId
+
+
+
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      SubnetId: !Ref SubnetId
+      # IamInstanceProfile: !Ref WebServerInstanceProfile
+      ImageId: !Ref AmiID
+      KeyName: nginx
+      InstanceType: !FindInMap [EnvironmentToInstanceType, !Ref EnvironmentType, InstanceType]
+      SecurityGroupIds:
+        - !Ref SSHSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Join [ ' ', [ !Ref EnvironmentType, Web Server ] ]
+
+
+  WebServerInstance2:
+      Type: AWS::EC2::Instance
+      Properties:
+        SubnetId: !Ref SubnetId
+        # IamInstanceProfile: !Ref WebServerInstanceProfile
+        ImageId: !Ref AmiID
+        InstanceType: !FindInMap [EnvironmentToInstanceType, !Ref EnvironmentType, InstanceType]
+        SecurityGroupIds:
+          - !Ref WebServerSecurityGroup
+        Tags:
+          - Key: Name
+            Value: !Join [ ' ', [ !Ref EnvironmentType, Web Server ] ]
+
+
+
+
       # 2. Add 'VpcId' property from "1. Prepare the security group resource" here
 
   WebServerEIP:
@@ -138,3 +141,8 @@ Outputs:
   # WebsiteURL:
   #   Value: !Sub http://${WebServerEIP}
   #   Description: Application URL
+
+  WebServerSecurityGroup:
+        Export: 
+        Description: 'Public DNS of EC2 instance'
+        Value: !Ref WebServerSecurityGroup

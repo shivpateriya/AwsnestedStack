@@ -143,7 +143,11 @@ Outputs:
     Value: !Ref VPC
 
   PublicSubnet1:
+    Export:
+      Name: VPCPublicSubnet1
     Value: !Ref VPCPublicSubnet1
 
   PublicSubnet2:
+    Export:
+      Name: VPCPublicSubnet2
     Value: !Ref VPCPublicSubnet2

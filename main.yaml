@@ -162,3 +162,6 @@ Resources:
       Parameters:
         VpcId: !GetAtt VpcStack.Outputs.VpcId
         SubnetId: !GetAtt VpcStack.Outputs.PublicSubnet1
+        SubnetId2: !GetAtt VpcStack.Outputs.PublicSubnet2
+        WebServerSecurityGroup: !GetAtt EC2Stack.Outputs.WebServerSecurityGroup
+    DependsOn:  EC2Stack

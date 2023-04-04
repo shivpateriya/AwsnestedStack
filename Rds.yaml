@@ -32,6 +32,15 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
     Description: 'The Subnet ID'
 
+  SubnetId2:
+    Type: AWS::EC2::Subnet::Id
+    Description: 'The Subnet ID'
+
+  WebServerSecurityGroup:
+    Type: String<AWS::EC2::SecurityGroup::Id>
+    Description: 'The security ID'
+
+
   DatabaseInstanceIdentifier:
     AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
     ConstraintDescription: Must begin with a letter and contain only alphanumeric characters
